@@ -31,6 +31,12 @@ swift build          # Debug build (for development)
 ./build.sh           # Release build + wraps into .app bundle
 ```
 
+## Install Locally
+
+```bash
+./build.sh --install # Build and copy to ~/Applications
+```
+
 ## Run
 
 ### Development (debug binary)
@@ -76,6 +82,9 @@ The app requires **Screen Recording** permission on macOS. The system will promp
 mac-screenshot-tool/
 ├── Package.swift
 ├── README.md
+├── Resources/
+│   ├── AppIcon.icns
+│   └── AppIcon.iconset/
 ├── docs/
 │   ├── research.md          # Technical research notes
 │   └── plan.md              # Implementation plan
@@ -89,7 +98,7 @@ mac-screenshot-tool/
     ├── Services/
     │   ├── FileService.swift         # File naming & conflict handling
     │   ├── ClipboardService.swift    # NSPasteboard integration
-    │   └── NotificationService.swift # User notifications
+│   └── NotificationService.swift # System notifications
     └── Views/
         ├── MenuBarContent.swift      # Menu bar dropdown UI
         └── SettingsView.swift        # Settings panel
@@ -101,6 +110,7 @@ mac-screenshot-tool/
 - Swift concurrency (async/await) runs the blocking `screencapture` process off the main actor
 - `@Observable` macro for reactive settings model
 - Settings are persisted to `UserDefaults` when values change
+- Notifications are delivered through `osascript` to avoid app-bundle-specific `UserNotifications` setup
 - `MenuBarExtra` with `.window` style for the menu bar interface
 - `NSApplicationActivationPolicy.accessory` for Dock icon hiding
 

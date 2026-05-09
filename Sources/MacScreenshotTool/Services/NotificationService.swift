@@ -1,5 +1,4 @@
 import Foundation
-import UserNotifications
 
 @MainActor
 class NotificationService {
@@ -7,44 +6,34 @@ class NotificationService {
 
     private init() {}
 
-    /// Request notification permission. Safe to call multiple times.
-    func requestPermission() {
-        UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound]) { granted, error in
-            if let error = error {
-                print("Notification permission error: \(error.localizedDescription)")
-            }
-            if granted {
-                print("Notification permission granted")
-            }
-        }
-    }
-
-    /// Send a notification that a screenshot was saved.
+    /// Show a system notification using osascript (works without UserNotifications framework).
     func notifyScreenshotSaved(fileName: String) {
-        notify(title: "Screenshot Saved", body: fileName)
+        let script = "display notification \(appleScriptString(fileName)) with title \(appleScriptString("Screenshot Saved"))"
+        runNotification(script)
     }
 
-    /// Send a notification that a screenshot failed.
+    /// Show a failure notification.
     func notifyScreenshotFailed(message: String) {
-        notify(title: "Screenshot Failed", body: message)
+        let script = "display notification \(appleScriptString(message)) with title \(appleScriptString("Screenshot Failed"))"
+        runNotification(script)
     }
 
-    private func notify(title: String, body: String) {
-        let content = UNMutableNotificationContent()
-        content.title = title
-        content.body = body
-        content.sound = .default
+    private func appleScriptString(_ value: String) -> String {
+        let escaped = value
+            .replacingOccurrences(of: "\\", with: "\\\\")
+            .replacingOccurrences(of: "\"", with: "\\\"")
+            .replacingOccurrences(of: "\r", with: " ")
+            .replacingOccurrences(of: "\n", with: " ")
 
-        let request = UNNotificationRequest(
-            identifier: UUID().uuidString,
-            content: content,
-            trigger: nil
-        )
+        return "\"\(escaped)\""
+    }
 
-        UNUserNotificationCenter.current().add(request) { error in
-            if let error = error {
-                print("Failed to deliver notification: \(error.localizedDescription)")
-            }
-        }
+    private func runNotification(_ script: String) {
+        let process = Process()
+        process.executableURL = URL(filePath: "/usr/bin/osascript")
+        process.arguments = ["-e", script]
+        process.standardOutput = FileHandle.nullDevice
+        process.standardError = FileHandle.nullDevice
+        try? process.run()
     }
 }

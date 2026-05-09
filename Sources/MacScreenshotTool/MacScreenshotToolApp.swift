@@ -18,10 +18,8 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         // Hide Dock icon - make this a pure menu bar app
         NSApplication.shared.setActivationPolicy(.accessory)
         
-        // Request notification permission on first launch (safe to call even without bundle)
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-            NotificationService.shared.requestPermission()
-        }
+        // Notification permission will be requested lazily on first screenshot
+        // (UserNotifications requires proper app bundle and signing to work)
     }
 
     func applicationWillTerminate(_ notification: Notification) {
