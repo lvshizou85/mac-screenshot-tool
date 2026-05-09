@@ -33,6 +33,34 @@ struct SettingsView: View {
                 Toggle("Copy to clipboard after capture", isOn: $settings.copyToClipboard)
                 Toggle("Show in Finder after capture", isOn: $settings.showInFinder)
             }
+
+            // Scrolling capture settings
+            Section("Scrolling Capture") {
+                HStack {
+                    Text("Max Segments")
+                    Spacer()
+                    Stepper(value: $settings.scrollSegments, in: 2...20) {
+                        Text("\(settings.scrollSegments)")
+                            .monospacedDigit()
+                    }
+                }
+                HStack {
+                    Text("Scroll Step")
+                    Spacer()
+                    Stepper(value: $settings.scrollStepPercent, in: 50...95, step: 5) {
+                        Text("\(settings.scrollStepPercent)%")
+                            .monospacedDigit()
+                    }
+                }
+                HStack {
+                    Text("Scroll Delay")
+                    Spacer()
+                    Stepper(value: $settings.scrollDelay, in: 0.1...2.0, step: 0.05) {
+                        Text(String(format: "%.2fs", settings.scrollDelay))
+                            .monospacedDigit()
+                    }
+                }
+            }
         }
         .padding()
         .frame(minWidth: 400)

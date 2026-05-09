@@ -17,7 +17,8 @@ class FileService {
     /// Handles conflicts by appending -1, -2, etc.
     func generateOutputURL(
         directory: String,
-        format: String
+        format: String,
+        prefix: String = "Screenshot"
     ) -> URL {
         let dirURL = URL(filePath: directory)
 
@@ -26,7 +27,7 @@ class FileService {
             try? fileManager.createDirectory(at: dirURL, withIntermediateDirectories: true)
         }
 
-        let baseName = "Screenshot " + dateFormatter.string(from: Date())
+        let baseName = prefix + " " + dateFormatter.string(from: Date())
         let ext = format.hasPrefix(".") ? String(format.dropFirst()) : format
         let baseURL = dirURL.appendingPathComponent("\(baseName).\(ext)")
 
