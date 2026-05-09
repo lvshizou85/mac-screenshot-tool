@@ -4,13 +4,17 @@ import CoreGraphics
 /// Provides an interactive fullscreen overlay for the user to select a screen region.
 @MainActor
 final class RegionSelector {
+    private static var activeController: RegionSelectorController?
 
     /// Present a fullscreen overlay and let the user draw a selection rectangle.
     /// Returns the selected CGRect in CG screen coordinates (origin at top-left).
     /// Throws `ScrollingCaptureError.cancelled` if the user presses ESC.
     static func selectRegion() async throws -> CGRect {
         return try await withCheckedThrowingContinuation { continuation in
-            let selector = RegionSelectorController(continuation: continuation)
+            let selector = RegionSelectorController(continuation: continuation) {
+                activeController = nil
+            }
+            activeController = selector
             selector.show()
         }
     }
@@ -23,10 +27,12 @@ private final class RegionSelectorController {
     private var window: NSWindow?
     private var selectionView: RegionSelectionView?
     private let continuation: CheckedContinuation<CGRect, Error>
+    private let onFinish: () -> Void
     private var didResume = false
 
-    init(continuation: CheckedContinuation<CGRect, Error>) {
+    init(continuation: CheckedContinuation<CGRect, Error>, onFinish: @escaping () -> Void) {
         self.continuation = continuation
+        self.onFinish = onFinish
     }
 
     func show() {
@@ -95,12 +101,14 @@ private final class RegionSelectorController {
         guard !didResume else { return }
         didResume = true
         continuation.resume(returning: value)
+        onFinish()
     }
 
     private func resume(throwing error: Error) {
         guard !didResume else { return }
         didResume = true
         continuation.resume(throwing: error)
+        onFinish()
     }
 }
 
