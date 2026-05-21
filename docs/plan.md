@@ -39,7 +39,7 @@
 使用 Swift Package Manager，项目根目录建议为：
 
 ```text
-/Users/lvshizou/mac-screenshot-tool
+mac-screenshot-tool/
 ├── Package.swift
 ├── Sources/
 │   └── MacScreenshotTool/
@@ -309,7 +309,7 @@ swift run MacScreenshotTool
 
 建议 Hermes 从阶段 1 和阶段 2 开始：
 
-1. 在 `/Users/lvshizou/mac-screenshot-tool` 创建 SwiftPM 应用骨架。
+1. 在项目根目录创建 SwiftPM 应用骨架。
 2. 实现 `MenuBarExtra` 菜单栏入口。
 3. 实现 `FileService` 和 `ScreenshotEngine`。
 4. 接通全屏截图与交互式区域截图。

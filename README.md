@@ -21,7 +21,7 @@ A lightweight macOS menu bar screenshot tool built with SwiftUI and Swift Packag
 ## Build
 
 ```bash
-cd /Users/lvshizou/mac-screenshot-tool
+cd /path/to/mac-screenshot-tool
 swift build          # Debug build (for development)
 ```
 
